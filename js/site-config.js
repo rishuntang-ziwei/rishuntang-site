@@ -19,7 +19,7 @@ window.RishuntangSiteConfig = {
     youtube: 'https://www.youtube.com/@holin4176',
     tiktok: 'https://www.tiktok.com/@holin417690',
     line: '', // 例：https://line.me/...
-    email: '', // 例：contact@example.com
+    email: 'contact@rishuntang.com',
     facebook: 'https://www.facebook.com/holin4176',
     instagram: '',
   },

@@ -21,7 +21,11 @@
     const root = scope || document
     root.querySelectorAll('[data-href-key]').forEach(function (el) {
       const key = el.getAttribute('data-href-key')
-      const url = cfg.links[key]
+      const raw = cfg.links[key]
+      const url =
+        key === 'email' && raw && !String(raw).startsWith('mailto:')
+          ? 'mailto:' + raw
+          : raw
       if (!url) {
         el.classList.add('is-disabled')
         el.setAttribute('aria-disabled', 'true')
