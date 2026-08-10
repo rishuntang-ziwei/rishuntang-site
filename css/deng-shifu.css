@@ -351,7 +351,8 @@ a {
   box-shadow: 0 8px 32px rgba(58, 47, 42, 0.12);
 }
 
-.ds-herb-card img {
+.ds-herb-card img,
+.ds-herb-card object {
   width: 100%;
   height: auto;
   display: block;
