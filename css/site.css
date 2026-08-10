@@ -22,6 +22,11 @@
   box-sizing: border-box;
 }
 
+.hidden,
+[hidden] {
+  display: none !important;
+}
+
 html {
   scroll-behavior: smooth;
 }

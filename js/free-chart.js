@@ -3,11 +3,6 @@
   if (!cfg) return
 
   const GUEST_STORAGE_KEY = 'guestChartPayload'
-  const TOPIC_OPTIONS = [
-    { value: 'overall', label: '整體運勢' },
-    { value: 'love', label: '戀愛運勢' },
-    { value: 'career', label: '事業運勢' },
-  ]
 
   const form = document.getElementById('freeChartForm')
   const errorEl = document.getElementById('freeChartError')
@@ -32,33 +27,12 @@
     return y + '-' + m + '-' + day
   }
 
-  function updateCalendarUI() {
-    const lunar = document.querySelector('input[name="calendar"]:checked')?.value === 'lunar'
-    document.getElementById('lunarDateFields')?.classList.toggle('hidden', !lunar)
-    document.getElementById('solarDateFields')?.classList.toggle('hidden', lunar)
-    document.getElementById('leapRow')?.classList.toggle('hidden', !lunar)
-    const dateLabel = document.getElementById('dateLabel')
-    const calendarNote = document.getElementById('calendarNote')
-    if (dateLabel) dateLabel.textContent = lunar ? '農曆出生日期' : '國曆出生日期'
-    if (calendarNote) calendarNote.textContent = lunar ? '以農曆排盤（陰曆）' : '以國曆排盤（陽曆）'
-  }
-
   function getPayload() {
     const genderEl = document.querySelector('input[name="gender"]:checked')
     if (!genderEl) throw new Error('請選擇性別')
 
-    const calendar = document.querySelector('input[name="calendar"]:checked')?.value || 'solar'
-    let date
-    if (calendar === 'lunar') {
-      const y = document.getElementById('lunarYear')?.value
-      const m = document.getElementById('lunarMonth')?.value
-      const d = document.getElementById('lunarDay')?.value
-      if (!y || !m || !d) throw new Error('請輸入農曆出生日期')
-      date = y + '-' + m + '-' + d
-    } else {
-      date = document.getElementById('solarDate')?.value
-      if (!date) throw new Error('請輸入國曆出生日期')
-    }
+    const date = document.getElementById('solarDate')?.value
+    if (!date) throw new Error('請輸入國曆出生日期')
 
     const timeVal = document.getElementById('time')?.value
     if (timeVal === '' || timeVal == null) throw new Error('請選擇出生時辰')
@@ -68,10 +42,10 @@
     return {
       name: (document.getElementById('name')?.value || '').trim() || '訪客',
       gender: genderEl.value,
-      calendar: calendar,
+      calendar: 'solar',
       date: date,
       timeIndex: Number(timeVal),
-      isLeap: Boolean(document.getElementById('isLeap')?.checked),
+      isLeap: false,
       initialChartType: 'natal',
       yearlyYear: new Date().getFullYear(),
       topic: topic,
@@ -80,11 +54,6 @@
 
   const solarDate = document.getElementById('solarDate')
   if (solarDate && !solarDate.value) solarDate.value = todaySolarDate()
-
-  document.querySelectorAll('input[name="calendar"]').forEach(function (el) {
-    el.addEventListener('change', updateCalendarUI)
-  })
-  updateCalendarUI()
 
   form.addEventListener('submit', function (e) {
     e.preventDefault()

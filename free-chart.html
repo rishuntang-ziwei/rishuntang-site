@@ -57,40 +57,10 @@
               </div>
             </fieldset>
 
-            <fieldset class="form-row">
-              <legend>曆法</legend>
-              <div class="inline-options">
-                <label><input type="radio" name="calendar" value="lunar" /> 農曆</label>
-                <label><input type="radio" name="calendar" value="solar" checked /> 國曆</label>
-              </div>
-            </fieldset>
-
             <div class="form-row">
-              <label id="dateLabel">國曆出生日期</label>
-              <p class="form-note" id="calendarNote">以國曆排盤（陽曆）</p>
-              <div id="lunarDateFields" class="hidden">
-                <div class="date-grid">
-                  <div>
-                    <label for="lunarYear">年</label>
-                    <input id="lunarYear" type="number" min="1900" max="2100" placeholder="年" />
-                  </div>
-                  <div>
-                    <label for="lunarMonth">月</label>
-                    <input id="lunarMonth" type="number" min="1" max="12" placeholder="月" />
-                  </div>
-                  <div>
-                    <label for="lunarDay">日</label>
-                    <input id="lunarDay" type="number" min="1" max="30" placeholder="日" />
-                  </div>
-                </div>
-              </div>
-              <div id="solarDateFields">
-                <input id="solarDate" type="date" />
-              </div>
-            </div>
-
-            <div class="form-row hidden" id="leapRow">
-              <label><input id="isLeap" type="checkbox" /> 閏月</label>
+              <label for="solarDate">國曆出生日期</label>
+              <p class="form-note">以國曆排盤（陽曆）</p>
+              <input id="solarDate" type="date" required />
             </div>
 
             <div class="form-row">
