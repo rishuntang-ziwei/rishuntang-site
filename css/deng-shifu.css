@@ -150,12 +150,15 @@ a {
 
 .ds-hero-banner {
   margin: 0 auto;
-  max-width: 960px;
   padding: 24px 16px 0;
+  text-align: center;
 }
 
 .ds-hero-banner img {
-  width: 100%;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
   border-radius: var(--radius);
   box-shadow: var(--shadow);
 }
