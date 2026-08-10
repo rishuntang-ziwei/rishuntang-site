@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>免費試排｜國際日舜堂紫微斗數</title>
+    <meta
+      name="description"
+      content="免費試排紫微斗數命盤，無需登入。填寫出生資料即可開啟排盤，並可選擇整體、戀愛或事業運勢進行 AI 簡易解析。"
+    />
+    <link rel="icon" href="./assets/logo.png?v=20260718b" type="image/png" />
+    <link rel="stylesheet" href="./css/site.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand-link" href="./index.html">
+          <img
+            class="site-logo site-logo--header"
+            src="./assets/logo.png?v=20260718b"
+            alt="日舜堂 RISHUNTANG"
+            width="200"
+            height="200"
+            decoding="async"
+          />
+          <span class="brand-text">
+            <span class="brand-name">國際日舜堂</span>
+            <span class="brand-tag">紫微斗數 · 免費試排</span>
+          </span>
+        </a>
+        <nav class="site-nav is-open" aria-label="主要導覽">
+          <a href="./index.html">返回官網</a>
+          <a class="nav-cta" data-href-key="memberLogin" href="https://rishuntang-ziwei.github.io/rishuntang-ziwei/index.html">會員登入</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="section free-chart-page">
+      <div class="container">
+        <div class="section-head">
+          <h1>免費試排</h1>
+          <p>無需登入，填寫出生資料後將在新視窗開啟排盤軟體。資料僅保留於該視窗，關閉後即清除。</p>
+        </div>
+
+        <div class="card free-chart-card">
+          <form id="freeChartForm" class="free-chart-form" autocomplete="off">
+            <div class="form-row">
+              <label for="name">姓名（選填）</label>
+              <input id="name" type="text" placeholder="可不填，預設顯示為訪客" autocomplete="off" />
+            </div>
+
+            <fieldset class="form-row">
+              <legend>性別</legend>
+              <div class="inline-options">
+                <label><input type="radio" name="gender" value="男" required /> 男</label>
+                <label><input type="radio" name="gender" value="女" /> 女</label>
+              </div>
+            </fieldset>
+
+            <fieldset class="form-row">
+              <legend>曆法</legend>
+              <div class="inline-options">
+                <label><input type="radio" name="calendar" value="lunar" /> 農曆</label>
+                <label><input type="radio" name="calendar" value="solar" checked /> 國曆</label>
+              </div>
+            </fieldset>
+
+            <div class="form-row">
+              <label id="dateLabel">國曆出生日期</label>
+              <p class="form-note" id="calendarNote">以國曆排盤（陽曆）</p>
+              <div id="lunarDateFields" class="hidden">
+                <div class="date-grid">
+                  <div>
+                    <label for="lunarYear">年</label>
+                    <input id="lunarYear" type="number" min="1900" max="2100" placeholder="年" />
+                  </div>
+                  <div>
+                    <label for="lunarMonth">月</label>
+                    <input id="lunarMonth" type="number" min="1" max="12" placeholder="月" />
+                  </div>
+                  <div>
+                    <label for="lunarDay">日</label>
+                    <input id="lunarDay" type="number" min="1" max="30" placeholder="日" />
+                  </div>
+                </div>
+              </div>
+              <div id="solarDateFields">
+                <input id="solarDate" type="date" />
+              </div>
+            </div>
+
+            <div class="form-row hidden" id="leapRow">
+              <label><input id="isLeap" type="checkbox" /> 閏月</label>
+            </div>
+
+            <div class="form-row">
+              <label for="time">出生時辰</label>
+              <select id="time" required>
+                <option value="" selected>請選擇時辰</option>
+                <option value="0">早子時 (00:00-01:00)</option>
+                <option value="1">丑時 (01:00-03:00)</option>
+                <option value="2">寅時 (03:00-05:00)</option>
+                <option value="3">卯時 (05:00-07:00)</option>
+                <option value="4">辰時 (07:00-09:00)</option>
+                <option value="5">巳時 (09:00-11:00)</option>
+                <option value="6">午時 (11:00-13:00)</option>
+                <option value="7">未時 (13:00-15:00)</option>
+                <option value="8">申時 (15:00-17:00)</option>
+                <option value="9">酉時 (17:00-19:00)</option>
+                <option value="10">戌時 (19:00-21:00)</option>
+                <option value="11">亥時 (21:00-23:00)</option>
+                <option value="12">晚子時 (23:00-00:00)</option>
+              </select>
+            </div>
+
+            <div class="form-row">
+              <label for="topic">解析主題（選填）</label>
+              <select id="topic">
+                <option value="overall" selected>整體運勢</option>
+                <option value="love">戀愛運勢</option>
+                <option value="career">事業運勢</option>
+              </select>
+              <p class="form-note">不選則預設為「整體運勢」。AI 解析全文不超過 300 字。</p>
+            </div>
+
+            <p id="freeChartError" class="form-error" hidden></p>
+
+            <button type="submit" class="btn btn-primary btn-block">開始免費試排</button>
+          </form>
+
+          <div class="free-chart-footnote">
+            <p>試排僅提供本命命盤與簡易 AI 解析。完整功能（流年、儲存命盤、神牌等）請<a data-href-key="memberLogin" href="https://rishuntang-ziwei.github.io/rishuntang-ziwei/index.html">註冊會員</a>使用。</p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="./js/site-config.js"></script>
+    <script src="./js/site.js"></script>
+    <script src="./js/free-chart.js"></script>
+  </body>
+</html>

@@ -15,6 +15,10 @@ window.RishuntangSiteConfig = {
   links: {
     /** 現有排盤系統（方案 B 工具入口） */
     chartApp: 'https://rishuntang-ziwei.github.io/rishuntang-ziwei/chart.html',
+    /** 免費試排表單頁 */
+    freeChart: './free-chart.html',
+    /** 訪客模式排盤（由 free-chart 開新視窗） */
+    guestChartApp: 'https://rishuntang-ziwei.github.io/rishuntang-ziwei/chart.html?guest=1',
     memberLogin: 'https://rishuntang-ziwei.github.io/rishuntang-ziwei/index.html',
     youtube: 'https://www.youtube.com/@holin4176',
     tiktok: 'https://www.tiktok.com/@holin417690',

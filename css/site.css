@@ -548,3 +548,91 @@ img {
     padding-top: 36px;
   }
 }
+
+.free-chart-page .section-head h1 {
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+}
+
+.free-chart-card {
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+.free-chart-form {
+  display: grid;
+  gap: 18px;
+}
+
+.free-chart-form label,
+.free-chart-form legend {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: var(--ink-muted);
+}
+
+.free-chart-form fieldset {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+.free-chart-form input[type='text'],
+.free-chart-form input[type='date'],
+.free-chart-form input[type='number'],
+.free-chart-form select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font: inherit;
+  background: var(--paper-surface);
+}
+
+.inline-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.inline-options label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 400;
+  margin: 0;
+}
+
+.date-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.form-note {
+  margin: 6px 0 0;
+  font-size: 0.92rem;
+  color: var(--ink-light);
+}
+
+.form-error {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  background: #fff0f0;
+  color: #8b2500;
+  border: 1px solid #e8c4c4;
+}
+
+.btn-block {
+  width: 100%;
+  justify-content: center;
+}
+
+.free-chart-footnote {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--brand-gold-light);
+  font-size: 0.95rem;
+  color: var(--ink-light);
+}
