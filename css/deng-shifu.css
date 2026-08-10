@@ -68,8 +68,19 @@ a {
 }
 
 .ds-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   text-decoration: none;
   color: inherit;
+}
+
+.ds-brand-logo {
+  display: block;
+  width: auto;
+  height: 44px;
+  max-width: min(52vw, 220px);
+  object-fit: contain;
 }
 
 .ds-brand-name {
