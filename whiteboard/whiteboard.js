@@ -1,17 +1,9 @@
 (function () {
-  const PALACES = [
-    { id: 'parents', name: '父母宮' },
-    { id: 'fortune', name: '福德宮' },
-    { id: 'property', name: '田宅宮' },
-    { id: 'career', name: '官祿宮' },
-    { id: 'siblings', name: '兄弟宮' },
-    { id: 'friends', name: '交友宮' },
-    { id: 'life', name: '命宮' },
-    { id: 'travel', name: '遷移宮' },
-    { id: 'children', name: '子女宮' },
-    { id: 'spouse', name: '夫妻宮' },
-    { id: 'wealth', name: '財帛宮' },
-    { id: 'health', name: '疾厄宮' },
+  const GRID = [
+    ['巳', '午', '未', '申'],
+    ['辰', null, null, '酉'],
+    ['卯', null, null, '戌'],
+    ['寅', '丑', '子', '亥'],
   ]
 
   /** 與 star-draw 主星牌組相同（日舜堂紫微卡牌） */
@@ -35,14 +27,13 @@
   const state = {
     interactionMode: 'draw',
     tool: 'pen',
-    color: '#ef5350',
+    color: '#c62828',
     drawing: false,
-    lastX: 0,
-    lastY: 0,
     dragCard: null,
     dragOffsetX: 0,
     dragOffsetY: 0,
     floatEl: null,
+    astrolabe: null,
   }
 
   const canvas = document.getElementById('drawCanvas')
@@ -51,37 +42,149 @@
   const deck = document.getElementById('starDeck')
   const ctx = canvas.getContext('2d')
 
-  function palaceById(id) {
-    return PALACES.find(function (p) { return p.id === id })
+  let astroApi = null
+
+  function formatPalaceName(name) {
+    const raw = String(name || '').replace(/宫/g, '宮')
+    const map = { 官祿: '事業', 官禄: '事業', 僕役: '交友', 仆役: '交友' }
+    const display = map[raw] || raw
+    return '(' + display.split('').join(' ') + ')'
+  }
+
+  function normalizeDate(date) {
+    const parts = date.split('-')
+    return parts[0] + '-' + Number(parts[1]) + '-' + Number(parts[2])
+  }
+
+  function todaySolarDate() {
+    const d = new Date()
+    const y = d.getFullYear()
+    const m = String(d.getMonth() + 1).padStart(2, '0')
+    const day = String(d.getDate()).padStart(2, '0')
+    return y + '-' + m + '-' + day
+  }
+
+  function getBirthInput() {
+    const date = document.getElementById('birthSolar')?.value
+    if (!date) throw new Error('請選擇國曆出生日期')
+    const timeVal = document.getElementById('birthTime')?.value
+    if (timeVal === '' || timeVal == null) throw new Error('請選擇出生時辰')
+    const genderEl = document.querySelector('input[name="wbGender"]:checked')
+    if (!genderEl) throw new Error('請選擇性別')
+    return {
+      gender: genderEl.value,
+      calendar: 'solar',
+      date: date,
+      timeIndex: Number(timeVal),
+      isLeap: false,
+    }
+  }
+
+  function computeAstrolabe(input) {
+    if (!astroApi) throw new Error('排盤引擎尚未載入')
+    const d = normalizeDate(input.date)
+    return astroApi.bySolar(d, input.timeIndex, input.gender, true, 'zh-TW')
+  }
+
+  function savePalaceCardHtml() {
+    const saved = {}
+    chartGrid.querySelectorAll('[data-drop-zone]').forEach(function (zone) {
+      saved[zone.dataset.dropZone] = zone.innerHTML
+    })
+    return saved
+  }
+
+  function restorePalaceCardHtml(saved) {
+    if (!saved) return
+    chartGrid.querySelectorAll('[data-drop-zone]').forEach(function (zone) {
+      const key = zone.dataset.dropZone
+      if (saved[key]) {
+        zone.innerHTML = saved[key]
+        zone.querySelectorAll('.wb-star-card').forEach(bindCardDrag)
+      }
+    })
+  }
+
+  function updatePalaceLabels(a) {
+    const map = new Map(a.palaces.map(function (p) { return [p.earthlyBranch, p] }))
+    chartGrid.querySelectorAll('.wb-cell[data-branch]').forEach(function (cell) {
+      const branch = cell.dataset.branch
+      const p = map.get(branch)
+      const labelEl = cell.querySelector('.wb-palace-label')
+      const ganEl = cell.querySelector('.wb-gz-gan')
+      const zhiEl = cell.querySelector('.wb-gz-zhi')
+      if (!p || !labelEl || !ganEl || !zhiEl) return
+      labelEl.textContent = formatPalaceName(p.name)
+      ganEl.textContent = p.heavenlyStem || ''
+      zhiEl.textContent = p.earthlyBranch || branch
+    })
+  }
+
+  function applyAstrolabe(a) {
+    state.astrolabe = a
+    updatePalaceLabels(a)
+  }
+
+  function refreshChartFromForm() {
+    try {
+      const saved = savePalaceCardHtml()
+      const input = getBirthInput()
+      const a = computeAstrolabe(input)
+      applyAstrolabe(a)
+      restorePalaceCardHtml(saved)
+    } catch (err) {
+      alert(err.message || '排盤失敗')
+    }
   }
 
   function buildChartGrid() {
-    PALACES.forEach(function (palace) {
-      const cell = document.createElement('div')
-      cell.className = 'wb-palace'
-      cell.dataset.palaceId = palace.id
-      cell.innerHTML =
-        '<div class="wb-palace-head">' + palace.name + '</div>' +
-        '<div class="wb-palace-body" data-drop-zone="' + palace.id + '"></div>'
-      chartGrid.appendChild(cell)
-    })
+    let centerPlaced = false
+    GRID.forEach(function (row, ri) {
+      row.forEach(function (branch, ci) {
+        if (!branch) {
+          if (ri === 1 && ci === 1 && !centerPlaced) {
+            centerPlaced = true
+            const center = document.createElement('div')
+            center.className = 'wb-center wb-cell'
+            center.id = 'chartCenter'
+            center.style.gridRow = '2 / span 2'
+            center.style.gridColumn = '2 / span 2'
+            center.innerHTML =
+              '<img class="wb-logo" src="../assets/logo.png" alt="日舜堂紫微斗數" onerror="this.hidden=true;this.nextElementSibling.hidden=false" />' +
+              '<div class="wb-logo-fallback" hidden>日舜堂<br />Logo</div>' +
+              '<p class="wb-brand-title">日舜堂紫微斗數</p>' +
+              '<div class="wb-topic-wrap">' +
+                '<input type="text" class="wb-topic-input" id="topicInput" maxlength="80" placeholder="本集教學主題…" />' +
+                '<p class="wb-topic-display hidden" id="topicDisplay"></p>' +
+                '<div class="wb-topic-actions">' +
+                  '<button type="button" class="wb-btn" id="topicLockBtn">鎖定主題</button>' +
+                  '<button type="button" class="wb-btn hidden" id="topicEditBtn">重新編輯</button>' +
+                '</div>' +
+              '</div>'
+            chartGrid.appendChild(center)
+          }
+          return
+        }
 
-    const center = document.createElement('div')
-    center.className = 'wb-center'
-    center.id = 'chartCenter'
-    center.innerHTML =
-      '<img class="wb-logo" src="../assets/logo.png" alt="日舜堂紫微斗數" onerror="this.hidden=true;this.nextElementSibling.hidden=false" />' +
-      '<div class="wb-logo-fallback" hidden>日舜堂<br />Logo</div>' +
-      '<p class="wb-brand-title">日舜堂紫微斗數</p>' +
-      '<div class="wb-topic-wrap">' +
-        '<input type="text" class="wb-topic-input" id="topicInput" maxlength="80" placeholder="本集教學主題…" />' +
-        '<p class="wb-topic-display hidden" id="topicDisplay"></p>' +
-        '<div class="wb-topic-actions">' +
-          '<button type="button" class="wb-btn" id="topicLockBtn">鎖定主題</button>' +
-          '<button type="button" class="wb-btn hidden" id="topicEditBtn">重新編輯</button>' +
-        '</div>' +
-      '</div>'
-    chartGrid.appendChild(center)
+        const cell = document.createElement('div')
+        cell.className = 'wb-cell'
+        cell.dataset.branch = branch
+        cell.style.gridRow = String(ri + 1)
+        cell.style.gridColumn = String(ci + 1)
+        cell.innerHTML =
+          '<div class="wb-palace-body" data-drop-zone="' + branch + '"></div>' +
+          '<div class="wb-palace-footer">' +
+            '<div class="wb-palace-footer-grid">' +
+              '<div class="wb-palace-label">(　)</div>' +
+              '<span class="wb-gz-col">' +
+                '<span class="wb-gz-gan">—</span>' +
+                '<span class="wb-gz-zhi">' + branch + '</span>' +
+              '</span>' +
+            '</div>' +
+          '</div>'
+        chartGrid.appendChild(cell)
+      })
+    })
   }
 
   function starCardByName(name) {
@@ -189,8 +292,6 @@
     if (evt.pointerType === 'mouse' && evt.button !== 0) return
     state.drawing = true
     const pt = canvasPoint(evt)
-    state.lastX = pt.x
-    state.lastY = pt.y
     canvas.setPointerCapture(evt.pointerId)
     applyStrokeStyle()
     ctx.beginPath()
@@ -203,8 +304,6 @@
     const pt = canvasPoint(evt)
     ctx.lineTo(pt.x, pt.y)
     ctx.stroke()
-    state.lastX = pt.x
-    state.lastY = pt.y
     evt.preventDefault()
   }
 
@@ -242,7 +341,6 @@
 
     state.floatEl = card.cloneNode(true)
     state.floatEl.classList.add('wb-float-card')
-    state.floatEl.classList.remove('is-dragging')
     document.body.appendChild(state.floatEl)
     moveFloatCard(evt.clientX, evt.clientY)
     evt.preventDefault()
@@ -282,11 +380,9 @@
     })
 
     if (zone) {
-      const clone = createStarCard(card.dataset.starName, {
+      zone.appendChild(createStarCard(card.dataset.starName, {
         src: card.querySelector('img').src,
-        skipDeckBind: false,
-      })
-      zone.appendChild(clone)
+      }))
     }
 
     card.classList.remove('is-dragging')
@@ -306,6 +402,7 @@
     const display = document.getElementById('topicDisplay')
     const lockBtn = document.getElementById('topicLockBtn')
     const editBtn = document.getElementById('topicEditBtn')
+    if (!input || !lockBtn) return
 
     lockBtn.addEventListener('click', function () {
       const text = input.value.trim()
@@ -350,6 +447,7 @@
       setTool('eraser')
     })
     document.getElementById('clearCanvasBtn').addEventListener('click', clearCanvas)
+    document.getElementById('applyBirthBtn').addEventListener('click', refreshChartFromForm)
 
     document.querySelectorAll('.wb-color').forEach(function (btn) {
       btn.addEventListener('click', function () {
@@ -370,6 +468,28 @@
     resizeCanvas()
   }
 
+  function initBirthFormDefaults() {
+    const dateEl = document.getElementById('birthSolar')
+    if (dateEl && !dateEl.value) dateEl.value = todaySolarDate()
+    const timeEl = document.getElementById('birthTime')
+    if (timeEl && timeEl.value === '') timeEl.value = '6'
+  }
+
+  function initAstro() {
+    if (!window.iztro) {
+      alert('排盤引擎載入失敗，無法計算干支宮位')
+      return
+    }
+    astroApi = window.iztro.astro
+    astroApi.config({
+      mutagens: {
+        gengHeavenly: ['taiyangMaj', 'wuquMaj', 'tiantongMaj', 'taiyinMaj'],
+      },
+    })
+    initBirthFormDefaults()
+    refreshChartFromForm()
+  }
+
   buildChartGrid()
   buildStarDeck()
   bindToolbar()
@@ -377,5 +497,11 @@
   initCanvasEvents()
   setInteractionMode('draw')
   setTool('pen')
-  setColor('#ef5350')
+  setColor('#c62828')
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAstro)
+  } else {
+    initAstro()
+  }
 })()

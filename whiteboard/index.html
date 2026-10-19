@@ -5,10 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>紫微斗數教學電子白板｜日舜堂</title>
     <meta name="robots" content="noindex" />
-    <link rel="stylesheet" href="./whiteboard.css" />
+    <link rel="stylesheet" href="./whiteboard.css?v=20261019a" />
   </head>
   <body>
     <header class="wb-toolbar" aria-label="白板工具列">
+      <div class="wb-toolbar-group wb-birth-group" role="group" aria-label="本命資料">
+        <label for="birthSolar">國曆生日</label>
+        <input type="date" id="birthSolar" />
+        <label for="birthTime">時辰</label>
+        <select id="birthTime" aria-label="出生時辰">
+          <option value="0">早子時</option>
+          <option value="1">丑時</option>
+          <option value="2">寅時</option>
+          <option value="3">卯時</option>
+          <option value="4">辰時</option>
+          <option value="5">巳時</option>
+          <option value="6" selected>午時</option>
+          <option value="7">未時</option>
+          <option value="8">申時</option>
+          <option value="9">酉時</option>
+          <option value="10">戌時</option>
+          <option value="11">亥時</option>
+          <option value="12">晚子時</option>
+        </select>
+        <label><input type="radio" name="wbGender" value="男" checked /> 男</label>
+        <label><input type="radio" name="wbGender" value="女" /> 女</label>
+        <button type="button" class="wb-btn wb-btn--primary" id="applyBirthBtn">更新干支宮位</button>
+      </div>
       <div class="wb-toolbar-group" role="group" aria-label="互動模式">
         <label>模式</label>
         <button type="button" class="wb-btn is-active" id="modeDrawBtn">繪圖模式</button>
@@ -22,10 +45,10 @@
       </div>
       <div class="wb-toolbar-group" role="group" aria-label="顏色">
         <label>顏色</label>
-        <button type="button" class="wb-color is-active" data-color="#ef5350" style="background:#ef5350" title="紅" aria-label="紅色"></button>
-        <button type="button" class="wb-color" data-color="#42a5f5" style="background:#42a5f5" title="藍" aria-label="藍色"></button>
+        <button type="button" class="wb-color is-active" data-color="#c62828" style="background:#c62828" title="紅" aria-label="紅色"></button>
+        <button type="button" class="wb-color" data-color="#1a237e" style="background:#1a237e" title="藍" aria-label="藍色"></button>
         <button type="button" class="wb-color" data-color="#212121" style="background:#212121;border-color:#666" title="黑" aria-label="黑色"></button>
-        <button type="button" class="wb-color" data-color="#66bb6a" style="background:#66bb6a" title="綠" aria-label="綠色"></button>
+        <button type="button" class="wb-color" data-color="#2e7d32" style="background:#2e7d32" title="綠" aria-label="綠色"></button>
       </div>
       <div class="wb-toolbar-group">
         <button type="button" class="wb-btn wb-btn--danger" id="clearCanvasBtn">清除全部手寫</button>
@@ -47,6 +70,8 @@
       </div>
     </div>
 
-    <script src="./whiteboard.js"></script>
+    <script src="./vendor/lunar.min.js"></script>
+    <script src="./vendor/iztro.min.js"></script>
+    <script src="./whiteboard.js?v=20261019a"></script>
   </body>
 </html>
