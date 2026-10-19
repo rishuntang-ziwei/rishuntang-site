@@ -118,7 +118,7 @@ body {
 
 .wb-deck {
   flex-shrink: 0;
-  width: var(--wb-deck-w);
+  width: 168px;
   max-height: 100%;
   display: flex;
   flex-direction: column;
@@ -152,6 +152,7 @@ body {
   border: 1px solid var(--wb-border);
   background: #1e222a;
   user-select: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
 }
 
 .wb-star-card:active {
@@ -261,7 +262,7 @@ body {
 }
 
 .wb-palace-body .wb-star-card {
-  width: 42px;
+  width: 48px;
   flex-shrink: 0;
 }
 

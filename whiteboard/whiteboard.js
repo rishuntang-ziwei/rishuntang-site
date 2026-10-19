@@ -14,9 +14,22 @@
     { id: 'health', name: '疾厄宮' },
   ]
 
-  const MAIN_STARS = [
-    '紫微', '天機', '太陽', '武曲', '天同', '廉貞', '天府',
-    '太陰', '貪狼', '巨門', '天相', '天梁', '七殺', '破軍',
+  /** 與 star-draw 主星牌組相同（日舜堂紫微卡牌） */
+  const MAJOR_STAR_CARDS = [
+    { name: '紫微', image: 'assets/cards/major/zi-wei.png' },
+    { name: '天機', image: 'assets/cards/major/tian-ji.png' },
+    { name: '太陽', image: 'assets/cards/major/tai-yang.png' },
+    { name: '武曲', image: 'assets/cards/major/wu-qu.png' },
+    { name: '天同', image: 'assets/cards/major/tian-tong.png' },
+    { name: '廉貞', image: 'assets/cards/major/lian-zhen.png' },
+    { name: '天府', image: 'assets/cards/major/tian-fu.png' },
+    { name: '太陰', image: 'assets/cards/major/tai-yin.png' },
+    { name: '貪狼', image: 'assets/cards/major/tan-lang.png' },
+    { name: '巨門', image: 'assets/cards/major/ju-men.png' },
+    { name: '天相', image: 'assets/cards/major/tian-xiang.png' },
+    { name: '天梁', image: 'assets/cards/major/tian-liang.png' },
+    { name: '七殺', image: 'assets/cards/major/qi-sha.png' },
+    { name: '破軍', image: 'assets/cards/major/po-jun.png' },
   ]
 
   const state = {
@@ -71,24 +84,19 @@
     chartGrid.appendChild(center)
   }
 
-  function starPlaceholderSrc(name) {
-    const svg =
-      '<svg xmlns="http://www.w3.org/2000/svg" width="180" height="240">' +
-      '<rect width="100%" height="100%" fill="#3d4452"/>' +
-      '<text x="50%" y="48%" dominant-baseline="middle" text-anchor="middle" fill="#eef0f4" font-size="28" font-family="KaiTi, serif">' +
-      name +
-      '</text></svg>'
-    return 'data:image/svg+xml,' + encodeURIComponent(svg)
+  function starCardByName(name) {
+    return MAJOR_STAR_CARDS.find(function (c) { return c.name === name })
   }
 
   function createStarCard(name, options) {
     const opts = options || {}
+    const meta = starCardByName(name)
     const card = document.createElement('div')
     card.className = 'wb-star-card'
     card.dataset.starName = name
     const img = document.createElement('img')
     img.className = 'wb-star-card-img star-card-img'
-    img.src = opts.src || starPlaceholderSrc(name)
+    img.src = opts.src || (meta && meta.image) || ''
     img.alt = name
     img.draggable = false
     card.appendChild(img)
@@ -97,8 +105,8 @@
   }
 
   function buildStarDeck() {
-    MAIN_STARS.forEach(function (name) {
-      deck.appendChild(createStarCard(name))
+    MAJOR_STAR_CARDS.forEach(function (star) {
+      deck.appendChild(createStarCard(star.name, { src: star.image }))
     })
   }
 
