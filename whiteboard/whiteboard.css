@@ -1,0 +1,416 @@
+:root {
+  --wb-bg: #1a1d24;
+  --wb-surface: #252932;
+  --wb-panel: #2e333d;
+  --wb-border: #454b58;
+  --wb-text: #eef0f4;
+  --wb-muted: #a8b0c0;
+  --wb-accent: #c4a574;
+  --wb-palace-bg: #323844;
+  --wb-palace-head: #3d4452;
+  --wb-danger: #e57373;
+  --wb-toolbar-h: 52px;
+  --wb-deck-w: 148px;
+  --font-ui: system-ui, 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+  --font-palace: 'DFKai-SB', 'BiauKai', '標楷體', 'KaiTi', serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: var(--wb-bg);
+  color: var(--wb-text);
+  font-family: var(--font-ui);
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.wb-toolbar {
+  flex-shrink: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  min-height: var(--wb-toolbar-h);
+  padding: 8px 14px;
+  background: var(--wb-panel);
+  border-bottom: 1px solid var(--wb-border);
+  z-index: 30;
+}
+
+.wb-toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-right: 12px;
+  border-right: 1px solid var(--wb-border);
+}
+
+.wb-toolbar-group:last-child {
+  border-right: none;
+}
+
+.wb-toolbar label {
+  font-size: 12px;
+  color: var(--wb-muted);
+  margin-right: 4px;
+}
+
+.wb-btn {
+  border: 1px solid var(--wb-border);
+  background: var(--wb-surface);
+  color: var(--wb-text);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.wb-btn:hover {
+  background: #383e4a;
+}
+
+.wb-btn.is-active {
+  background: #4a4035;
+  border-color: var(--wb-accent);
+  color: #fff8ec;
+}
+
+.wb-btn--danger:hover {
+  border-color: var(--wb-danger);
+  color: var(--wb-danger);
+}
+
+.wb-color {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+}
+
+.wb-color.is-active {
+  border-color: #fff;
+  box-shadow: 0 0 0 2px var(--wb-accent);
+}
+
+.wb-main {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  gap: 12px;
+}
+
+.wb-deck {
+  flex-shrink: 0;
+  width: var(--wb-deck-w);
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--wb-panel);
+  border: 1px solid var(--wb-border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.wb-deck-head {
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  border-bottom: 1px solid var(--wb-border);
+  color: var(--wb-accent);
+}
+
+.wb-deck-scroll {
+  overflow-y: auto;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.wb-star-card {
+  touch-action: none;
+  cursor: grab;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--wb-border);
+  background: #1e222a;
+  user-select: none;
+}
+
+.wb-star-card:active {
+  cursor: grabbing;
+}
+
+.wb-star-card.is-dragging {
+  opacity: 0.45;
+}
+
+.wb-star-card-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.wb-stage-wrap {
+  flex: 1;
+  min-width: 0;
+  max-width: min(100%, calc((100vh - var(--wb-toolbar-h) - 24px) * 16 / 9 + var(--wb-deck-w) + 12px));
+  display: flex;
+  justify-content: center;
+}
+
+.wb-stage {
+  position: relative;
+  width: 100%;
+  max-width: calc((100vh - var(--wb-toolbar-h) - 24px) * 16 / 9);
+  aspect-ratio: 16 / 9;
+  background: #2a2f3a;
+  border: 2px solid var(--wb-border);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+}
+
+.wb-chart {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  grid-template-areas:
+    'p-parents p-fortune p-property p-career'
+    'p-siblings p-center p-center p-friends'
+    'p-life p-center p-center p-travel'
+    'p-children p-spouse p-wealth p-health';
+  gap: 3px;
+  padding: 3px;
+  background: #1f232b;
+}
+
+.wb-palace[data-palace-id='parents'] { grid-area: p-parents; }
+.wb-palace[data-palace-id='fortune'] { grid-area: p-fortune; }
+.wb-palace[data-palace-id='property'] { grid-area: p-property; }
+.wb-palace[data-palace-id='career'] { grid-area: p-career; }
+.wb-palace[data-palace-id='siblings'] { grid-area: p-siblings; }
+.wb-palace[data-palace-id='friends'] { grid-area: p-friends; }
+.wb-palace[data-palace-id='life'] { grid-area: p-life; }
+.wb-palace[data-palace-id='travel'] { grid-area: p-travel; }
+.wb-palace[data-palace-id='children'] { grid-area: p-children; }
+.wb-palace[data-palace-id='spouse'] { grid-area: p-spouse; }
+.wb-palace[data-palace-id='wealth'] { grid-area: p-wealth; }
+.wb-palace[data-palace-id='health'] { grid-area: p-health; }
+
+.wb-palace {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--wb-palace-bg);
+  border: 1px solid var(--wb-border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.wb-palace-head {
+  flex-shrink: 0;
+  padding: 4px 6px;
+  font-family: var(--font-palace);
+  font-size: clamp(11px, 1.35vw, 15px);
+  font-weight: 700;
+  text-align: center;
+  background: var(--wb-palace-head);
+  color: var(--wb-accent);
+  letter-spacing: 0.12em;
+  border-bottom: 1px solid var(--wb-border);
+}
+
+.wb-palace-body {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  padding: 4px;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 4px;
+}
+
+.wb-palace-body.is-drop-target {
+  outline: 2px dashed var(--wb-accent);
+  outline-offset: -2px;
+  background: rgba(196, 165, 116, 0.08);
+}
+
+.wb-palace-body .wb-star-card {
+  width: 42px;
+  flex-shrink: 0;
+}
+
+.wb-center {
+  grid-area: p-center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px;
+  background: linear-gradient(160deg, #353b48 0%, #2a303c 100%);
+  border: 1px solid var(--wb-border);
+  border-radius: 6px;
+  text-align: center;
+}
+
+.wb-logo {
+  width: min(42%, 120px);
+  height: auto;
+  object-fit: contain;
+  opacity: 0.95;
+}
+
+.wb-logo-fallback {
+  width: 88px;
+  height: 88px;
+  border: 2px dashed var(--wb-border);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-palace);
+  font-size: 14px;
+  color: var(--wb-muted);
+  line-height: 1.35;
+}
+
+.wb-brand-title {
+  margin: 0;
+  font-family: var(--font-palace);
+  font-size: clamp(14px, 1.8vw, 18px);
+  color: var(--wb-text);
+  letter-spacing: 0.15em;
+}
+
+.wb-topic-wrap {
+  width: 100%;
+  max-width: 280px;
+}
+
+.wb-topic-input {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--wb-border);
+  background: #1e222a;
+  color: var(--wb-text);
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.wb-topic-input:focus {
+  outline: none;
+  border-color: var(--wb-accent);
+}
+
+.wb-topic-display {
+  margin: 0;
+  padding: 8px 10px;
+  font-family: var(--font-palace);
+  font-size: clamp(13px, 1.6vw, 16px);
+  line-height: 1.5;
+  color: #fff8ec;
+  border-top: 1px solid var(--wb-border);
+  width: 100%;
+}
+
+.wb-topic-actions {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+.wb-topic-actions .wb-btn {
+  font-size: 12px;
+  padding: 4px 10px;
+}
+
+.wb-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  touch-action: none;
+}
+
+.wb-canvas.is-pass-through {
+  pointer-events: none;
+}
+
+.wb-float-card {
+  position: fixed;
+  z-index: 50;
+  width: 72px;
+  pointer-events: none;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+}
+
+.wb-mode-hint {
+  font-size: 12px;
+  color: var(--wb-muted);
+  margin-left: auto;
+}
+
+@media (max-width: 900px) {
+  .wb-main {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .wb-deck {
+    width: 100%;
+    max-height: 120px;
+  }
+
+  .wb-deck-scroll {
+    flex-direction: row;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .wb-star-card {
+    width: 64px;
+    flex-shrink: 0;
+  }
+
+  .wb-stage-wrap {
+    max-width: 100%;
+  }
+
+  .wb-stage {
+    max-width: 100%;
+  }
+
+  .wb-mode-hint {
+    width: 100%;
+    margin-left: 0;
+    order: 99;
+  }
+}

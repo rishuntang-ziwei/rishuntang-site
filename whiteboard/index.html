@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>紫微斗數教學電子白板｜日舜堂</title>
+    <meta name="robots" content="noindex" />
+    <link rel="stylesheet" href="./whiteboard.css" />
+  </head>
+  <body>
+    <header class="wb-toolbar" aria-label="白板工具列">
+      <div class="wb-toolbar-group" role="group" aria-label="互動模式">
+        <label>模式</label>
+        <button type="button" class="wb-btn is-active" id="modeDrawBtn">繪圖模式</button>
+        <button type="button" class="wb-btn" id="modeDragBtn">拖曳模式</button>
+      </div>
+      <div class="wb-toolbar-group" role="group" aria-label="畫筆">
+        <label>畫筆</label>
+        <button type="button" class="wb-btn is-active" id="toolPenBtn">書寫筆</button>
+        <button type="button" class="wb-btn" id="toolHighlighterBtn">螢光筆</button>
+        <button type="button" class="wb-btn" id="toolEraserBtn">橡皮擦</button>
+      </div>
+      <div class="wb-toolbar-group" role="group" aria-label="顏色">
+        <label>顏色</label>
+        <button type="button" class="wb-color is-active" data-color="#ef5350" style="background:#ef5350" title="紅" aria-label="紅色"></button>
+        <button type="button" class="wb-color" data-color="#42a5f5" style="background:#42a5f5" title="藍" aria-label="藍色"></button>
+        <button type="button" class="wb-color" data-color="#212121" style="background:#212121;border-color:#666" title="黑" aria-label="黑色"></button>
+        <button type="button" class="wb-color" data-color="#66bb6a" style="background:#66bb6a" title="綠" aria-label="綠色"></button>
+      </div>
+      <div class="wb-toolbar-group">
+        <button type="button" class="wb-btn wb-btn--danger" id="clearCanvasBtn">清除全部手寫</button>
+      </div>
+      <p class="wb-mode-hint" id="modeHint">繪圖模式：可在命盤上書寫標記</p>
+    </header>
+
+    <div class="wb-main">
+      <aside class="wb-deck" aria-label="主星卡牌區">
+        <div class="wb-deck-head">14 主星圖卡</div>
+        <div class="wb-deck-scroll" id="starDeck"></div>
+      </aside>
+
+      <div class="wb-stage-wrap">
+        <div class="wb-stage" id="chartStage">
+          <div class="wb-chart" id="chartGrid"></div>
+          <canvas class="wb-canvas" id="drawCanvas" aria-label="手寫繪圖層"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <script src="./whiteboard.js"></script>
+  </body>
+</html>
