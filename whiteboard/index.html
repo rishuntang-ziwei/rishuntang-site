@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>紫微斗數教學電子白板｜日舜堂</title>
     <meta name="robots" content="noindex" />
-    <link rel="stylesheet" href="./whiteboard.css?v=20261019a" />
+    <link rel="stylesheet" href="./whiteboard.css?v=20261019b" />
   </head>
   <body>
     <header class="wb-toolbar" aria-label="白板工具列">
@@ -30,7 +30,7 @@
         </select>
         <label><input type="radio" name="wbGender" value="男" checked /> 男</label>
         <label><input type="radio" name="wbGender" value="女" /> 女</label>
-        <button type="button" class="wb-btn wb-btn--primary" id="applyBirthBtn">更新干支宮位</button>
+        <button type="button" class="wb-btn wb-btn--primary" id="applyBirthBtn">排盤／更新命盤</button>
       </div>
       <div class="wb-toolbar-group" role="group" aria-label="互動模式">
         <label>模式</label>
@@ -58,7 +58,7 @@
 
     <div class="wb-main">
       <aside class="wb-deck" aria-label="主星卡牌區">
-        <div class="wb-deck-head">14 主星 · 紫微卡牌</div>
+        <div class="wb-deck-head">14 主星 · 文字小卡</div>
         <div class="wb-deck-scroll" id="starDeck"></div>
       </aside>
 
@@ -72,6 +72,7 @@
 
     <script src="./vendor/lunar.min.js"></script>
     <script src="./vendor/iztro.min.js"></script>
-    <script src="./whiteboard.js?v=20261019a"></script>
+    <script src="./vendor/rishuntang-brightness.js"></script>
+    <script src="./whiteboard.js?v=20261019b"></script>
   </body>
 </html>

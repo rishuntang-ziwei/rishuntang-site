@@ -6,23 +6,44 @@
     ['寅', '丑', '子', '亥'],
   ]
 
-  /** 與 star-draw 主星牌組相同（日舜堂紫微卡牌） */
-  const MAJOR_STAR_CARDS = [
-    { name: '紫微', image: 'assets/cards/major/zi-wei.png' },
-    { name: '天機', image: 'assets/cards/major/tian-ji.png' },
-    { name: '太陽', image: 'assets/cards/major/tai-yang.png' },
-    { name: '武曲', image: 'assets/cards/major/wu-qu.png' },
-    { name: '天同', image: 'assets/cards/major/tian-tong.png' },
-    { name: '廉貞', image: 'assets/cards/major/lian-zhen.png' },
-    { name: '天府', image: 'assets/cards/major/tian-fu.png' },
-    { name: '太陰', image: 'assets/cards/major/tai-yin.png' },
-    { name: '貪狼', image: 'assets/cards/major/tan-lang.png' },
-    { name: '巨門', image: 'assets/cards/major/ju-men.png' },
-    { name: '天相', image: 'assets/cards/major/tian-xiang.png' },
-    { name: '天梁', image: 'assets/cards/major/tian-liang.png' },
-    { name: '七殺', image: 'assets/cards/major/qi-sha.png' },
-    { name: '破軍', image: 'assets/cards/major/po-jun.png' },
+  const MAIN_STAR_NAMES = [
+    '紫微', '天機', '太陽', '武曲', '天同', '廉貞', '天府',
+    '太陰', '貪狼', '巨門', '天相', '天梁', '七殺', '破軍',
   ]
+
+  const MAJOR_STAR_ORDER_RTL = [
+    '紫微', '廉貞', '武曲', '天相', '天府', '七殺', '破軍', '貪狼',
+    '太陽', '太陰', '天機', '巨門', '天同', '天梁',
+  ]
+
+  const MUTAGEN_BY_STEM = {
+    甲: ['廉貞', '破軍', '武曲', '太陽'],
+    乙: ['天機', '天梁', '紫微', '太陰'],
+    丙: ['天同', '天機', '文昌', '廉貞'],
+    丁: ['太陰', '天同', '天機', '巨門'],
+    戊: ['貪狼', '太陰', '右弼', '天機'],
+    己: ['武曲', '貪狼', '天梁', '文曲'],
+    庚: ['太陽', '武曲', '天同', '太陰'],
+    辛: ['巨門', '太陽', '文曲', '文昌'],
+    壬: ['天梁', '紫微', '左輔', '武曲'],
+    癸: ['破軍', '巨門', '太陰', '貪狼'],
+  }
+
+  const MUTAGEN_LABELS = ['祿', '權', '科', '忌']
+
+  const HIGHLIGHT_GREEN = new Set([
+    '天馬', '天鉞', '天魁', '左輔', '右弼', '文昌', '文曲',
+    '地劫', '地空', '擎羊', '祿存', '鈴星', '火星', '陀羅',
+  ])
+  const LEFT_PURPLE = new Set([
+    '解神', '天刑', '天廚', '咸池', '天空', '天姚', '陰煞', '紅鸞', '華蓋',
+  ])
+  const LEFT_GREEN = new Set(['三台', '八座', '恩光', '天貴'])
+  const EXCLUDED = new Set([
+    '天德', '台輔', '天月', '天喜', '寡宿', '天才', '年解', '鳳閣', '天使', '天哭',
+    '天官', '天虛', '天福', '天巫', '月德', '天壽', '龍池', '孤辰',
+    '破碎', '封誥', '旬空', '空亡', '截路', '蜚廉', '截空', '天傷',
+  ])
 
   const state = {
     interactionMode: 'draw',
@@ -86,21 +107,152 @@
     return astroApi.bySolar(d, input.timeIndex, input.gender, true, 'zh-TW')
   }
 
-  function savePalaceCardHtml() {
+  function formatBazi(a) {
+    const parts = a.rawDates.chineseDate
+    return (
+      parts.yearly[0] + parts.yearly[1] + ' ' +
+      parts.monthly[0] + parts.monthly[1] + ' ' +
+      parts.daily[0] + parts.daily[1] + ' ' +
+      parts.hourly[0] + parts.hourly[1]
+    )
+  }
+
+  function formatBrightness(b) {
+    if (!b) return ''
+    const raw = String(b).trim()
+    if (raw === '利') return '旺'
+    if (raw === '地') return '閒'
+    const canonical = new Set(['廟', '旺', '平', '陷', '閒'])
+    if (canonical.has(raw)) return raw
+    return '平'
+  }
+
+  function getNatalYearStem(a) {
+    return a.rawDates.chineseDate.yearly[0]
+  }
+
+  function getMutagenForStar(stem, starName) {
+    const stars = MUTAGEN_BY_STEM[stem]
+    if (!stars) return ''
+    const idx = stars.indexOf(starName)
+    return idx >= 0 ? MUTAGEN_LABELS[idx] : ''
+  }
+
+  function mutagenClass(m) {
+    return { 祿: 'lu', 權: 'quan', 科: 'ke', 忌: 'ji' }[m] || 'lu'
+  }
+
+  function getZiweiBranch(a) {
+    const palace = a.palaces.find(function (p) {
+      return p.majorStars.some(function (s) { return s.name === '紫微' })
+    })
+    return palace ? palace.earthlyBranch : null
+  }
+
+  function lookupRishuntangBrightness(ziweiBranch, palaceBranch, starName) {
+    const table = window.RishuntangBrightness
+    if (!table || !ziweiBranch || !palaceBranch) return null
+    const stars = table[ziweiBranch] && table[ziweiBranch][palaceBranch]
+    if (!stars) return null
+    const hit = stars.find(function (s) { return s.name === starName })
+    return hit ? hit.brightness : null
+  }
+
+  function majorBrightnessForDisplay(a, palaceBranch, starName, iztroBrightness) {
+    const ziweiBranch = getZiweiBranch(a)
+    return lookupRishuntangBrightness(ziweiBranch, palaceBranch, starName) ?? iztroBrightness
+  }
+
+  function sortMajorStars(stars) {
+    const order = new Map(MAJOR_STAR_ORDER_RTL.map(function (name, index) { return [name, index] }))
+    return stars.slice().sort(function (a, b) {
+      return (order.get(b.name) ?? -1) - (order.get(a.name) ?? -1)
+    })
+  }
+
+  function filterStars(stars) {
+    return stars.filter(function (s) { return !EXCLUDED.has(s.name) })
+  }
+
+  function splitMinors(stars) {
+    const filtered = filterStars(stars)
+    return {
+      leftPurple: filtered.filter(function (s) { return LEFT_PURPLE.has(s.name) }),
+      leftGreen: filtered.filter(function (s) { return LEFT_GREEN.has(s.name) }),
+      rightGreen: filtered.filter(function (s) { return HIGHLIGHT_GREEN.has(s.name) }),
+    }
+  }
+
+  function renderStarLine(star, roleClass, a, natalStem) {
+    const mut = getMutagenForStar(natalStem, star.name)
+    const mutHtml = mut
+      ? '<span class="wb-star-mutagen ' + mutagenClass(mut) + '">' + mut + '</span>'
+      : ''
+    const bright = star.brightness && roleClass === 'major'
+      ? '<span class="wb-star-bright">' + formatBrightness(star.brightness) + '</span>'
+      : ''
+    return (
+      '<div class="wb-star-line ' + roleClass + '">' +
+        '<span class="wb-star-name">' + star.name + '</span>' +
+        bright +
+        mutHtml +
+      '</div>'
+    )
+  }
+
+  function renderPalaceAutoHtml(p, a) {
+    const natalStem = getNatalYearStem(a)
+    const minors = splitMinors(
+      p.minorStars.concat(p.adjectiveStars).map(function (s) {
+        return { name: s.name, brightness: s.brightness }
+      }),
+    )
+    const majors = sortMajorStars(
+      p.majorStars.map(function (s) {
+        return {
+          name: s.name,
+          brightness: majorBrightnessForDisplay(a, p.earthlyBranch, s.name, s.brightness),
+        }
+      }),
+    )
+
+    const leftLines =
+      minors.leftPurple.map(function (s) { return renderStarLine(s, 'minor-purple', a, natalStem) }).join('') +
+      minors.leftGreen.map(function (s) { return renderStarLine(s, 'minor-green', a, natalStem) }).join('')
+    const rightMinors = minors.rightGreen
+      .map(function (s) { return renderStarLine(s, 'minor-green', a, natalStem) })
+      .join('')
+    const majorLines = majors.length
+      ? majors.map(function (s) { return renderStarLine(s, 'major', a, natalStem) }).join('')
+      : renderStarLine({ name: '空', brightness: '' }, 'major', a, natalStem)
+
+    return (
+      '<div class="wb-stars-layout">' +
+        '<div class="wb-stars-left">' + leftLines + '</div>' +
+        '<div class="wb-stars-right">' + rightMinors + majorLines + '</div>' +
+      '</div>'
+    )
+  }
+
+  function saveManualCards() {
     const saved = {}
-    chartGrid.querySelectorAll('[data-drop-zone]').forEach(function (zone) {
-      saved[zone.dataset.dropZone] = zone.innerHTML
+    chartGrid.querySelectorAll('.wb-manual-layer').forEach(function (layer) {
+      const body = layer.closest('.wb-palace-body')
+      if (!body) return
+      saved[body.dataset.dropZone] = layer.innerHTML
     })
     return saved
   }
 
-  function restorePalaceCardHtml(saved) {
+  function restoreManualCards(saved) {
     if (!saved) return
-    chartGrid.querySelectorAll('[data-drop-zone]').forEach(function (zone) {
-      const key = zone.dataset.dropZone
+    chartGrid.querySelectorAll('.wb-manual-layer').forEach(function (layer) {
+      const body = layer.closest('.wb-palace-body')
+      if (!body) return
+      const key = body.dataset.dropZone
       if (saved[key]) {
-        zone.innerHTML = saved[key]
-        zone.querySelectorAll('.wb-star-card').forEach(bindCardDrag)
+        layer.innerHTML = saved[key]
+        layer.querySelectorAll('.wb-star-card').forEach(bindCardDrag)
       }
     })
   }
@@ -117,21 +269,43 @@
       labelEl.textContent = formatPalaceName(p.name)
       ganEl.textContent = p.heavenlyStem || ''
       zhiEl.textContent = p.earthlyBranch || branch
+
+      const autoLayer = cell.querySelector('.wb-auto-layer')
+      if (autoLayer) autoLayer.innerHTML = renderPalaceAutoHtml(p, a)
+
+      let badge = cell.querySelector('.wb-body-badge')
+      if (p.isBodyPalace) {
+        if (!badge) {
+          badge = document.createElement('span')
+          badge.className = 'wb-body-badge'
+          cell.appendChild(badge)
+        }
+        badge.textContent = '身'
+      } else if (badge) {
+        badge.remove()
+      }
     })
   }
 
-  function applyAstrolabe(a) {
+  function updateCenterPanel(a, input) {
+    const el = document.getElementById('centerBazi')
+    if (!el || !a) return
+    el.textContent = formatBazi(a) + ' · ' + input.gender + ' · 本命盤'
+  }
+
+  function applyAstrolabe(a, input) {
     state.astrolabe = a
     updatePalaceLabels(a)
+    updateCenterPanel(a, input)
   }
 
   function refreshChartFromForm() {
     try {
-      const saved = savePalaceCardHtml()
+      const saved = saveManualCards()
       const input = getBirthInput()
       const a = computeAstrolabe(input)
-      applyAstrolabe(a)
-      restorePalaceCardHtml(saved)
+      applyAstrolabe(a, input)
+      restoreManualCards(saved)
     } catch (err) {
       alert(err.message || '排盤失敗')
     }
@@ -153,6 +327,7 @@
               '<img class="wb-logo" src="../assets/logo.png" alt="日舜堂紫微斗數" onerror="this.hidden=true;this.nextElementSibling.hidden=false" />' +
               '<div class="wb-logo-fallback" hidden>日舜堂<br />Logo</div>' +
               '<p class="wb-brand-title">日舜堂紫微斗數</p>' +
+              '<p class="wb-center-bazi" id="centerBazi"></p>' +
               '<div class="wb-topic-wrap">' +
                 '<input type="text" class="wb-topic-input" id="topicInput" maxlength="80" placeholder="本集教學主題…" />' +
                 '<p class="wb-topic-display hidden" id="topicDisplay"></p>' +
@@ -172,7 +347,10 @@
         cell.style.gridRow = String(ri + 1)
         cell.style.gridColumn = String(ci + 1)
         cell.innerHTML =
-          '<div class="wb-palace-body" data-drop-zone="' + branch + '"></div>' +
+          '<div class="wb-palace-body" data-drop-zone="' + branch + '">' +
+            '<div class="wb-auto-layer"></div>' +
+            '<div class="wb-manual-layer"></div>' +
+          '</div>' +
           '<div class="wb-palace-footer">' +
             '<div class="wb-palace-footer-grid">' +
               '<div class="wb-palace-label">(　)</div>' +
@@ -187,29 +365,22 @@
     })
   }
 
-  function starCardByName(name) {
-    return MAJOR_STAR_CARDS.find(function (c) { return c.name === name })
-  }
-
   function createStarCard(name, options) {
     const opts = options || {}
-    const meta = starCardByName(name)
     const card = document.createElement('div')
     card.className = 'wb-star-card'
     card.dataset.starName = name
-    const img = document.createElement('img')
-    img.className = 'wb-star-card-img star-card-img'
-    img.src = opts.src || (meta && meta.image) || ''
-    img.alt = name
-    img.draggable = false
-    card.appendChild(img)
+    const label = document.createElement('span')
+    label.className = 'wb-star-card-label star-card-label'
+    label.textContent = name
+    card.appendChild(label)
     if (!opts.skipDeckBind) bindCardDrag(card)
     return card
   }
 
   function buildStarDeck() {
-    MAJOR_STAR_CARDS.forEach(function (star) {
-      deck.appendChild(createStarCard(star.name, { src: star.image }))
+    MAIN_STAR_NAMES.forEach(function (name) {
+      deck.appendChild(createStarCard(name))
     })
   }
 
@@ -380,9 +551,9 @@
     })
 
     if (zone) {
-      zone.appendChild(createStarCard(card.dataset.starName, {
-        src: card.querySelector('img').src,
-      }))
+      const manual = zone.querySelector('.wb-manual-layer')
+      const target = manual || zone
+      target.appendChild(createStarCard(card.dataset.starName))
     }
 
     card.classList.remove('is-dragging')
