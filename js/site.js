@@ -49,6 +49,41 @@
 
   applyHrefKeys()
 
+  function renderAbout() {
+    const about = cfg.about
+    if (!about) return
+
+    const subtitleEl = document.getElementById('aboutSubtitle')
+    if (subtitleEl && about.subtitle) subtitleEl.textContent = about.subtitle
+
+    const proseEl = document.getElementById('aboutProse')
+    if (proseEl && Array.isArray(about.paragraphs)) {
+      proseEl.innerHTML = about.paragraphs
+        .map(function (text) {
+          return '<p>' + escapeHtml(text) + '</p>'
+        })
+        .join('')
+    }
+
+    const listEl = document.getElementById('aboutHighlights')
+    if (listEl && Array.isArray(about.highlights) && about.highlights.length) {
+      listEl.innerHTML = about.highlights
+        .map(function (item) {
+          const title = item && item.title ? escapeHtml(item.title) : ''
+          const text = item && item.text ? escapeHtml(item.text) : ''
+          if (!title && !text) return ''
+          return (
+            '<li class="about-highlight-item">' +
+            (title ? '<strong>' + title + '</strong>' : '') +
+            (text ? '<span>' + text + '</span>' : '') +
+            '</li>'
+          )
+        })
+        .filter(Boolean)
+        .join('')
+    }
+  }
+
   function escapeHtml(text) {
     return String(text)
       .replace(/&/g, '&amp;')
@@ -164,6 +199,7 @@
       .join('')
   }
 
+  renderAbout()
   renderYoutubeEmbeds()
   renderTiktokEmbeds()
   applyHrefKeys(document.getElementById('videos'))
