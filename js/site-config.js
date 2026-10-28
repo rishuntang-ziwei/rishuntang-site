@@ -34,6 +34,8 @@ window.RishuntangSiteConfig = {
     freeChart: './free-chart.html',
     /** 訪客模式排盤（由 free-chart 開新視窗） */
     guestChartApp: 'https://rishuntang-ziwei.github.io/rishuntang-ziwei/chart.html?guest=1',
+    /** 線上教學站（影片＋同步排盤） */
+    courseHome: './course/index.html',
     memberLogin: 'https://rishuntang-ziwei.github.io/rishuntang-ziwei/index.html',
     youtube: 'https://www.youtube.com/@holin4176',
     tiktok: 'https://www.tiktok.com/@holin417690',
@@ -83,9 +85,9 @@ window.RishuntangSiteConfig = {
       id: 'online',
       icon: '☁',
       title: '線上教學',
-      desc: '（待填寫）課程名稱、堂數、開課時間與報名方式。',
-      cta: '了解課程',
-      hrefKey: 'line',
+      desc: '影片示範搭配排盤軟體同步練習；課程架構已就緒，影片陸續上架。',
+      cta: '進入教學站',
+      hrefKey: 'courseHome',
     },
     {
       id: 'offline',

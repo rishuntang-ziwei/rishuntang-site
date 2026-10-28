@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>單元｜國際日舜堂線上教學</title>
+    <meta name="description" content="日舜堂紫微斗數線上教學單元 — 影片示範與排盤同步練習。" />
+    <link rel="icon" href="../assets/logo.png?v=20260718b" type="image/png" />
+    <link rel="stylesheet" href="./css/course.css?v=20261028" />
+  </head>
+  <body>
+    <header class="site-header course-header">
+      <div class="container header-inner">
+        <a class="brand-link" href="./index.html">
+          <img
+            class="site-logo site-logo--header"
+            src="../assets/logo.png?v=20260718b"
+            alt="日舜堂"
+            width="200"
+            height="200"
+            decoding="async"
+          />
+          <span class="brand-text">
+            <span class="brand-name">線上教學</span>
+            <span class="brand-tag">影片 ＋ 同步排盤</span>
+          </span>
+        </a>
+        <nav class="site-nav" aria-label="單元頁導覽">
+          <a href="./index.html">課程目錄</a>
+          <a href="../index.html">官網</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="course-main">
+      <div class="container">
+        <div id="lessonError" class="card prose" hidden>
+          <p>找不到此單元，請從 <a href="./index.html">課程目錄</a> 重新選擇。</p>
+        </div>
+
+        <div class="lesson-mobile-tabs" aria-label="手機版切換">
+          <button type="button" class="is-active" data-panel="video">教學影片</button>
+          <button type="button" data-panel="chart">同步排盤</button>
+        </div>
+
+        <div id="lessonLayout" class="lesson-layout" data-mobile-panel="video">
+          <div class="lesson-sidebar">
+            <section class="lesson-video-panel" aria-labelledby="lessonVideoTitle">
+              <div class="lesson-panel-head">
+                <h2 id="lessonVideoTitle">載入中…</h2>
+              </div>
+              <div class="lesson-video-body" id="lessonVideoBody"></div>
+              <div class="lesson-meta" id="lessonMeta"></div>
+              <nav class="lesson-nav-drawer" id="lessonNavList" aria-label="本課程單元列表"></nav>
+            </section>
+          </div>
+
+          <section class="lesson-chart-panel" aria-label="學員排盤練習">
+            <div class="lesson-panel-head">
+              <h2>學員練習 · 日舜堂排盤</h2>
+            </div>
+            <div class="lesson-chart-toolbar">
+              <a class="btn btn-secondary" id="lessonChartOpenTab" href="#">新分頁開啟排盤</a>
+              <a class="btn btn-secondary" id="lessonChartLogin" href="#">會員登入</a>
+            </div>
+            <div class="lesson-chart-frame-wrap">
+              <iframe
+                id="lessonChartFrame"
+                class="lesson-chart-frame"
+                title="日舜堂紫微斗數排盤"
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+              ></iframe>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <script src="./course-config.js?v=20261028"></script>
+    <script src="./js/course-common.js?v=20261028"></script>
+    <script src="./js/course-lesson.js?v=20261028"></script>
+  </body>
+</html>
